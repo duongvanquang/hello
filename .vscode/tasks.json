@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            // Bật simulator iPhone 17 Pro Max (nếu chưa bật) và mở cửa sổ Simulator.
+            "label": "Bật iPhone 17 Pro Max",
+            "type": "shell",
+            "command": "xcrun simctl boot 40DCFFCF-4768-4B00-813C-EF7E4727C6C0 2>/dev/null; xcrun simctl bootstatus 40DCFFCF-4768-4B00-813C-EF7E4727C6C0 >/dev/null; open -a Simulator --args -CurrentDeviceUDID 40DCFFCF-4768-4B00-813C-EF7E4727C6C0",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

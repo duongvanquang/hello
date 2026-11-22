@@ -2,13 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            // F5: tự bật simulator iPhone 17 Pro Max rồi chạy app lên đó.
             "name": "Flutter (iPhone 17 Pro Max)",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
-            "deviceId": "40DCFFCF-4768-4B00-813C-EF7E4727C6C0"
+            "deviceId": "40DCFFCF-4768-4B00-813C-EF7E4727C6C0",
+            "preLaunchTask": "Bật iPhone 17 Pro Max"
         },
         {
+            // Chạy trên thiết bị đang chọn ở góc dưới bên phải VS Code.
             "name": "Flutter (thiết bị đang chọn)",
             "type": "dart",
             "request": "launch",
