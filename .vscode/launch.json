@@ -3,19 +3,22 @@
     "configurations": [
         {
             // F5: tự bật simulator iPhone 17 Pro Max rồi chạy app lên đó.
+            // Khóa API đọc từ .env.json (không đẩy lên Git).
             "name": "Flutter (iPhone 17 Pro Max)",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
             "deviceId": "40DCFFCF-4768-4B00-813C-EF7E4727C6C0",
-            "preLaunchTask": "Bật iPhone 17 Pro Max"
+            "preLaunchTask": "Bật iPhone 17 Pro Max",
+            "toolArgs": ["--dart-define-from-file=.env.json"]
         },
         {
             // Chạy trên thiết bị đang chọn ở góc dưới bên phải VS Code.
             "name": "Flutter (thiết bị đang chọn)",
             "type": "dart",
             "request": "launch",
-            "program": "lib/main.dart"
+            "program": "lib/main.dart",
+            "toolArgs": ["--dart-define-from-file=.env.json"]
         }
     ]
 }
