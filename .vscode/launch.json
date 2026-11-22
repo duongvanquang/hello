@@ -1,15 +1,18 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "name": "Flutter (iPhone 17 Pro Max)",
+            "type": "dart",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "program": "lib/main.dart",
+            "deviceId": "40DCFFCF-4768-4B00-813C-EF7E4727C6C0"
+        },
+        {
+            "name": "Flutter (thiết bị đang chọn)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart"
         }
     ]
 }
