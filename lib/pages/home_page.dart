@@ -19,6 +19,8 @@ import '../widgets/sliver_movie_grid.dart';
 import '../widgets/sliver_my_list_grid.dart';
 import 'movie_detail_page.dart';
 import 'trailer_page.dart';
+import '../widgets/skeletons/home_skeleton.dart';
+import '../widgets/skeletons/poster_grid_skeleton.dart';
 
 /// Trang chủ: thanh tiêu đề + chip lọc + nội dung theo bộ lọc ([HomeCubit]).
 /// Bấm lại chip đang chọn để bỏ lọc. Kéo xuống để tải lại.
@@ -98,6 +100,7 @@ class HomePage extends StatelessWidget {
           : data == null || (data.featured == null && data.categories.isEmpty),
       emptyIcon: Icons.movie_outlined,
       emptyMessage: AppStrings.noMovies,
+      skeleton: isGenre ? const PosterGridSkeleton() : const HomeSkeleton(),
       builder: (context) => isGenre
           ? SliverMovieGrid(movies: state.genreMovies, heroPrefix: 'genre')
           : _rows(context, data!),

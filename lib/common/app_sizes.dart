@@ -21,6 +21,12 @@ class AppSizes {
   static const double avatarIconRatio = 0.66;
   static const double authLogo = 76;
 
+  /// Ảnh đại diện được thu nhỏ còn tối đa cỡ này (điểm ảnh) trước khi lưu.
+  static const double avatarImageMax = 512;
+
+  /// Nút máy ảnh nhỏ ở góc ảnh đại diện.
+  static const double avatarBadge = 26;
+
   // ===== Nút / thanh =====
   static const double buttonHeight = 50;
   static const double buttonHeightSmall = 48;
@@ -44,6 +50,16 @@ class AppSizes {
   /// Tỉ lệ ảnh dọc (poster) và ảnh ngang (cảnh phim).
   static const double posterAspectRatio = 2 / 3;
   static const double backdropAspectRatio = 16 / 9;
+
+  // ===== Khung shimmer =====
+  /// Chiều cao một dòng chữ giả, dòng tiêu đề giả.
+  static const double skeletonLine = 12;
+  static const double skeletonTitle = 18;
+
+  /// Độ rộng dòng tiêu đề giả / nút giả, tính theo chiều rộng màn hình.
+  static const double skeletonFullRatio = 1;
+  static const double skeletonTitleRatio = 0.45;
+  static const double skeletonButtonRatio = 0.4;
 
   // ===== Bố cục =====
   /// Chiều rộng tối đa của form đăng nhập/đăng ký (trên máy tính bảng).

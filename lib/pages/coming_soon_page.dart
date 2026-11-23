@@ -9,6 +9,7 @@ import '../widgets/coming_soon_tile.dart';
 import '../widgets/sliver_load_state_view.dart';
 import '../widgets/tab_title.dart';
 import 'movie_detail_page.dart';
+import '../widgets/skeletons/coming_soon_skeleton.dart';
 
 /// Tab Sắp chiếu: phim sắp ra mắt ([ComingSoonCubit]). Kéo xuống để tải lại.
 class ComingSoonPage extends StatelessWidget {
@@ -36,6 +37,7 @@ class ComingSoonPage extends StatelessWidget {
                 isEmpty: state.movies.isEmpty,
                 emptyIcon: Icons.event_busy,
                 emptyMessage: AppStrings.noMovies,
+                skeleton: const ComingSoonSkeleton(),
                 builder: (_) => SliverList.builder(
                   itemCount: state.movies.length,
                   itemBuilder: (context, i) {

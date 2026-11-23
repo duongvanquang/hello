@@ -17,6 +17,10 @@ class AppColors {
   static const Color textPrimary = Colors.white;
   static const Color textSecondary = Color(0xFFB3B3C0);
 
+  /// Hiệu ứng shimmer khi đang tải: nền khung và vệt sáng chạy qua.
+  static const Color shimmerBase = Color(0xFF1C1C24);
+  static const Color shimmerHighlight = Color(0xFF2E2E3A);
+
   /// Chữ trên nền sáng (nút Phát màu trắng, nút Google).
   static const Color textOnLight = Colors.black;
 

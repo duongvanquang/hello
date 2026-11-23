@@ -8,6 +8,7 @@ import 'package:hello/pages/main_page.dart';
 import 'package:hello/pages/movie_detail_page.dart';
 import 'package:hello/pages/register_page.dart';
 import 'package:hello/widgets/movie_poster.dart';
+import 'package:hello/widgets/skeletons/home_skeleton.dart';
 import 'package:hello/widgets/sliver_movie_grid.dart';
 
 import 'fakes/fake_tmdb_client.dart';
@@ -66,7 +67,7 @@ void main() {
     testWidgets('Tải xong thì hiện banner và các hàng phim', (tester) async {
       useIphoneSize(tester);
       await tester.pumpWidget(app());
-      expect(find.text(AppStrings.loading), findsOneWidget);
+      expect(find.byType(HomeSkeleton), findsOneWidget); // shimmer khi đang tải
 
       await tester.pumpAndSettle();
       expect(find.text(AppStrings.featuredLabel), findsOneWidget);

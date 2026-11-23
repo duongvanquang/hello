@@ -10,7 +10,7 @@ import '../common/app_spacing.dart';
 import '../common/app_strings.dart';
 import '../common/app_text_styles.dart';
 import '../services/auth_failure.dart';
-import 'user_avatar.dart';
+import 'editable_avatar.dart';
 
 /// Bảng trượt từ dưới lên khi bấm ảnh đại diện: tên, email, nút Đăng xuất.
 class AccountSheet extends StatelessWidget {
@@ -57,7 +57,7 @@ class AccountSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const UserAvatar(size: AppSizes.avatarLarge),
+            const EditableAvatar(),
             const SizedBox(height: AppSpacing.md),
             Text(
               displayName.isNotEmpty ? displayName : AppStrings.guestName,

@@ -9,13 +9,15 @@ import '../common/app_spacing.dart';
 import '../common/app_strings.dart';
 import '../common/app_text_styles.dart';
 import '../models/movie.dart';
-import '../widgets/loading_view.dart';
 import '../widgets/movie_action_row.dart';
 import '../widgets/movie_artwork.dart';
 import '../widgets/movie_meta_row.dart';
 import '../widgets/sliver_movie_grid.dart';
 import '../widgets/wide_button.dart';
 import 'trailer_page.dart';
+import '../widgets/app_shimmer.dart';
+import '../widgets/skeletons/poster_grid_skeleton.dart';
+import '../widgets/skeletons/text_lines_skeleton.dart';
 
 /// Trang chi tiết một bộ phim ([MovieDetailCubit]). Hiện ngay thông tin đã có,
 /// rồi tải thêm thể loại, thời lượng, mô tả đầy đủ và phim tương tự.
@@ -98,10 +100,7 @@ class MovieDetailPage extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.l),
           if (loadingDetails && description.isEmpty)
-            const LinearProgressIndicator(
-              color: AppColors.primary,
-              backgroundColor: AppColors.surface,
-            )
+            const AppShimmer(child: TextLinesSkeleton())
           else
             Text(description, style: AppTextStyles.body),
           if (movie.genres.isNotEmpty) ...[
@@ -127,14 +126,7 @@ class MovieDetailPage extends StatelessWidget {
   }
 
   Widget _similar(MovieDetailState state) {
-    if (state.similarStatus.isLoading) {
-      return const SliverToBoxAdapter(
-        child: Padding(
-          padding: EdgeInsets.all(AppSpacing.xxl),
-          child: LoadingView(),
-        ),
-      );
-    }
+    if (state.similarStatus.isLoading) return const PosterGridSkeleton();
     if (state.similar.isEmpty) {
       return const SliverToBoxAdapter(
         child: Padding(

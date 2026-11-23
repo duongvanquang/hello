@@ -78,6 +78,16 @@ class AppStrings {
   static const String googleSignInFailed =
       'Đăng nhập Google thất bại. Vui lòng thử lại.';
 
+  // ===== Ảnh đại diện =====
+  static const String changeAvatar = 'Đổi ảnh đại diện';
+  static const String takePhoto = 'Chụp ảnh';
+  static const String chooseFromLibrary = 'Chọn từ thư viện';
+  static const String removePhoto = 'Xóa ảnh đại diện';
+  static const String cameraUnavailable =
+      'Không mở được camera hoặc thư viện ảnh. Hãy kiểm tra quyền truy cập trong Cài đặt.';
+  static const String avatarSaveFailed =
+      'Không lưu được ảnh. Vui lòng thử lại.';
+
   // ===== Hàng phim trên trang chủ =====
   static const String rowTrending = 'Thịnh hành tuần này';
   static const String rowMovieTrending = 'Phim lẻ thịnh hành';

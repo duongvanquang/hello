@@ -10,6 +10,7 @@ import '../widgets/empty_view.dart';
 import '../widgets/search_box.dart';
 import '../widgets/sliver_load_state_view.dart';
 import '../widgets/sliver_movie_grid.dart';
+import '../widgets/skeletons/poster_grid_skeleton.dart';
 
 /// Tab Tìm kiếm: gõ tên phim, [SearchBloc] tự đợi ngừng gõ rồi gọi TMDB.
 class SearchPage extends StatefulWidget {
@@ -67,6 +68,7 @@ class _SearchPageState extends State<SearchPage> {
                 isEmpty: state.movies.isEmpty,
                 emptyIcon: Icons.search_off,
                 emptyMessage: AppStrings.searchNoResult,
+                skeleton: const PosterGridSkeleton(),
                 builder: (_) =>
                     SliverMovieGrid(movies: state.movies, heroPrefix: 'search'),
               );

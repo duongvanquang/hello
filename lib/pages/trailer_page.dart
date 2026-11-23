@@ -14,7 +14,8 @@ import '../models/movie.dart';
 import '../models/video.dart';
 import '../widgets/empty_view.dart';
 import '../widgets/error_view.dart';
-import '../widgets/loading_view.dart';
+import '../widgets/app_shimmer.dart';
+import '../widgets/skeletons/backdrop_card_skeleton.dart';
 
 /// Trang phát trailer của phim (video YouTube tìm bằng [TrailerCubit]), tự phát.
 /// Là StatefulWidget vì cần đóng trình phát YouTube khi rời trang.
@@ -77,7 +78,9 @@ class _TrailerPageState extends State<TrailerPage> {
       ),
       body: BlocBuilder<TrailerCubit, TrailerState>(
         builder: (context, state) {
-          if (state.status.isLoading) return const LoadingView();
+          if (state.status.isLoading) {
+            return const AppShimmer(child: BackdropCardSkeleton());
+          }
           if (state.status.isFailure) {
             return ErrorView(
               message: state.errorMessage ?? '',

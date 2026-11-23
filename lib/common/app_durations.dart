@@ -8,6 +8,9 @@ class AppDurations {
   /// Ảnh hiện dần khi tải xong.
   static const Duration imageFade = Duration(milliseconds: 250);
 
+  /// Một lượt vệt sáng shimmer chạy qua.
+  static const Duration shimmer = Duration(milliseconds: 1300);
+
   /// Đợi người dùng ngừng gõ rồi mới tìm kiếm.
   static const Duration searchDebounce = Duration(milliseconds: 450);
 

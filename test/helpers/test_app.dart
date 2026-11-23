@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'package:hello/blocs/auth/auth_cubit.dart';
+import 'package:hello/blocs/avatar/avatar_cubit.dart';
 import 'package:hello/blocs/my_list/my_list_cubit.dart';
 import 'package:hello/blocs/user_ratings/user_ratings_cubit.dart';
 import 'package:hello/repositories/movie_repository.dart';
 import 'package:hello/services/auth_service.dart';
+import 'package:hello/services/avatar_storage.dart';
 import 'package:hello/services/tmdb_api.dart';
 
 import '../fakes/fake_tmdb_client.dart';
@@ -33,6 +38,13 @@ Widget testApp(Widget home, {MovieRepository? repository}) {
     child: MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AuthCubit(AuthService.instance)),
+        BlocProvider(
+          create: (ctx) => AvatarCubit(
+            AvatarStorage(baseDirectory: Directory.systemTemp.createTemp),
+            ImagePicker(),
+            ctx.read<AuthCubit>(),
+          ),
+        ),
         BlocProvider(create: (_) => MyListCubit()),
         BlocProvider(create: (_) => UserRatingsCubit()),
       ],

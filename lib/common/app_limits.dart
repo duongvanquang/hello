@@ -28,6 +28,16 @@ class AppLimits {
   /// TMDB chấm thang 10: mỗi sao = 2 điểm.
   static const int pointsPerStar = 2;
 
+  /// Chất lượng nén ảnh đại diện (0–100).
+  static const int avatarQuality = 85;
+
+  /// Số khung giả hiện khi đang tải (shimmer).
+  static const int skeletonRows = 3;
+  static const int skeletonPostersPerRow = 4;
+  static const int skeletonGridItems = 9;
+  static const int skeletonListItems = 3;
+  static const int skeletonTextLines = 3;
+
   /// Số chữ số sau dấu phẩy của điểm (7.8).
   static const int ratingDecimals = 1;
 }

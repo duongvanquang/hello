@@ -11,7 +11,9 @@ import '../common/app_strings.dart';
 import '../common/app_text_styles.dart';
 import '../models/genre.dart';
 import 'error_view.dart';
-import 'loading_view.dart';
+import '../common/app_limits.dart';
+import 'app_shimmer.dart';
+import 'skeletons/text_lines_skeleton.dart';
 
 /// Bảng chọn thể loại trượt từ dưới lên, danh sách lấy bằng [GenresCubit].
 /// Trả về thể loại được chọn, hoặc null nếu đóng bảng.
@@ -56,7 +58,16 @@ class GenrePickerSheet extends StatelessWidget {
             Expanded(
               child: BlocBuilder<GenresCubit, GenresState>(
                 builder: (context, state) {
-                  if (state.status.isLoading) return const LoadingView();
+                  if (state.status.isLoading) {
+                    return const Padding(
+                      padding: EdgeInsets.all(AppSpacing.xl),
+                      child: AppShimmer(
+                        child: TextLinesSkeleton(
+                          lines: AppLimits.skeletonGridItems,
+                        ),
+                      ),
+                    );
+                  }
                   if (state.status.isFailure) {
                     return ErrorView(
                       message: state.errorMessage ?? '',

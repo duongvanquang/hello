@@ -2,8 +2,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../common/app_colors.dart';
 import '../models/movie.dart';
+import 'app_shimmer.dart';
 import 'broken_image.dart';
 import 'rating_badge.dart';
+import 'shimmer_box.dart';
 import '../common/app_radius.dart';
 import '../common/app_opacity.dart';
 import '../common/app_durations.dart';
@@ -40,14 +42,24 @@ class MovieArtwork extends StatelessWidget {
               url,
               fit: BoxFit.cover,
               gaplessPlayback: true,
-              frameBuilder: (context, child, frame, loadedSync) =>
-                  AnimatedOpacity(
-                    opacity: loadedSync || frame != null
-                        ? AppOpacity.visible
-                        : AppOpacity.hidden,
-                    duration: AppDurations.imageFade,
-                    child: child,
-                  ),
+              frameBuilder: (context, child, frame, loadedSync) {
+                final loaded = loadedSync || frame != null;
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Ảnh chưa tải xong thì hiện shimmer bên dưới.
+                    if (!loaded)
+                      const AppShimmer(
+                        child: ShimmerBox(radius: AppRadius.none),
+                      ),
+                    AnimatedOpacity(
+                      opacity: loaded ? AppOpacity.visible : AppOpacity.hidden,
+                      duration: AppDurations.imageFade,
+                      child: child,
+                    ),
+                  ],
+                );
+              },
               errorBuilder: (_, _, _) => const BrokenImage(),
             )
           else
