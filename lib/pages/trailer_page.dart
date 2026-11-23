@@ -1,6 +1,9 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
+import '../blocs/trailer/trailer_cubit.dart';
+import '../blocs/trailer/trailer_state.dart';
 import '../common/app_colors.dart';
 import '../common/app_limits.dart';
 import '../common/app_sizes.dart';
@@ -9,20 +12,26 @@ import '../common/app_strings.dart';
 import '../common/app_text_styles.dart';
 import '../models/movie.dart';
 import '../models/video.dart';
-import '../repositories/movie_repository.dart';
 import '../widgets/empty_view.dart';
 import '../widgets/error_view.dart';
 import '../widgets/loading_view.dart';
 
-/// Trang phát trailer của phim (video YouTube lấy từ TMDB), tự phát khi mở.
+/// Trang phát trailer của phim (video YouTube tìm bằng [TrailerCubit]), tự phát.
+/// Là StatefulWidget vì cần đóng trình phát YouTube khi rời trang.
 class TrailerPage extends StatefulWidget {
   const TrailerPage({super.key, required this.movie});
 
   final Movie movie;
 
   static Future<void> open(BuildContext context, Movie movie) {
-    return Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => TrailerPage(movie: movie)));
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (ctx) => TrailerCubit(ctx.read(), movie)..load(),
+          child: TrailerPage(movie: movie),
+        ),
+      ),
+    );
   }
 
   @override
@@ -30,9 +39,6 @@ class TrailerPage extends StatefulWidget {
 }
 
 class _TrailerPageState extends State<TrailerPage> {
-  late Future<Video?> _trailer = MovieRepository.instance.loadTrailer(
-    widget.movie,
-  );
   YoutubePlayerController? _controller;
 
   @override
@@ -40,10 +46,6 @@ class _TrailerPageState extends State<TrailerPage> {
     _controller?.close();
     super.dispose();
   }
-
-  void _retry() => setState(
-    () => _trailer = MovieRepository.instance.loadTrailer(widget.movie),
-  );
 
   /// Tạo trình phát một lần cho video, tự phát ngay.
   YoutubePlayerController _controllerFor(Video video) {
@@ -73,16 +75,16 @@ class _TrailerPageState extends State<TrailerPage> {
           overflow: TextOverflow.ellipsis,
         ),
       ),
-      body: FutureBuilder<Video?>(
-        future: _trailer,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const LoadingView();
+      body: BlocBuilder<TrailerCubit, TrailerState>(
+        builder: (context, state) {
+          if (state.status.isLoading) return const LoadingView();
+          if (state.status.isFailure) {
+            return ErrorView(
+              message: state.errorMessage ?? '',
+              onRetry: context.read<TrailerCubit>().load,
+            );
           }
-          if (snapshot.hasError) {
-            return ErrorView(message: '${snapshot.error}', onRetry: _retry);
-          }
-          final video = snapshot.data;
+          final video = state.video;
           if (video == null) {
             return const EmptyView(
               icon: Icons.videocam_off_outlined,

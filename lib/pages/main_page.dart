@@ -1,15 +1,21 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../blocs/coming_soon/coming_soon_cubit.dart';
+import '../blocs/home/home_cubit.dart';
+import '../blocs/search/search_bloc.dart';
 import '../common/app_colors.dart';
+import '../common/app_sizes.dart';
 import '../common/app_strings.dart';
+import '../models/main_tab.dart';
+import '../repositories/movie_repository.dart';
 import 'coming_soon_page.dart';
 import 'home_page.dart';
 import 'my_list_page.dart';
 import 'search_page.dart';
-import '../common/app_sizes.dart';
-import '../models/main_tab.dart';
 
 /// Khung chính của app: thanh tab dưới và 4 tab.
+/// Tạo Cubit/Bloc của các tab một lần ở đây, để chuyển tab không phải tải lại.
 /// Muốn thêm tab: thêm 1 trang vào [_pages] và 1 nút vào [_destinations].
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -55,16 +61,24 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: IndexedStack(index: _tabIndex, children: _pages),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tabIndex,
-        onDestinationSelected: _selectTab,
-        backgroundColor: AppColors.surface,
-        indicatorColor: AppColors.navIndicator,
-        height: AppSizes.navBarHeight,
-        destinations: _destinations,
+    final repository = context.read<MovieRepository>();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => HomeCubit(repository)..load()),
+        BlocProvider(create: (_) => SearchBloc(repository)),
+        BlocProvider(create: (_) => ComingSoonCubit(repository)..load()),
+      ],
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: IndexedStack(index: _tabIndex, children: _pages),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _tabIndex,
+          onDestinationSelected: _selectTab,
+          backgroundColor: AppColors.surface,
+          indicatorColor: AppColors.navIndicator,
+          height: AppSizes.navBarHeight,
+          destinations: _destinations,
+        ),
       ),
     );
   }

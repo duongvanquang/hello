@@ -1,82 +1,45 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../blocs/coming_soon/coming_soon_cubit.dart';
+import '../blocs/coming_soon/coming_soon_state.dart';
 import '../common/app_colors.dart';
 import '../common/app_strings.dart';
-import '../models/movie.dart';
-import '../repositories/movie_repository.dart';
 import '../widgets/coming_soon_tile.dart';
-import '../widgets/empty_view.dart';
-import '../widgets/error_view.dart';
-import '../widgets/loading_view.dart';
+import '../widgets/sliver_load_state_view.dart';
 import '../widgets/tab_title.dart';
 import 'movie_detail_page.dart';
 
-/// Tab Sắp chiếu: phim sắp ra mắt từ TMDB, ngày gần nhất lên trước.
-class ComingSoonPage extends StatefulWidget {
+/// Tab Sắp chiếu: phim sắp ra mắt ([ComingSoonCubit]). Kéo xuống để tải lại.
+class ComingSoonPage extends StatelessWidget {
   const ComingSoonPage({super.key});
 
   @override
-  State<ComingSoonPage> createState() => _ComingSoonPageState();
-}
-
-class _ComingSoonPageState extends State<ComingSoonPage> {
-  late Future<List<Movie>> _future = MovieRepository.instance.loadUpcoming();
-
-  Future<void> _reload() async {
-    final future = MovieRepository.instance.loadUpcoming();
-    setState(() => _future = future);
-    try {
-      await future;
-    } catch (_) {
-      // Lỗi đã hiện trên màn hình.
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ComingSoonCubit>();
     return SafeArea(
       bottom: false,
       child: RefreshIndicator(
         color: AppColors.primary,
-        onRefresh: _reload,
+        onRefresh: cubit.load,
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             const SliverToBoxAdapter(
               child: TabTitle(title: AppStrings.tabComingSoon),
             ),
-            FutureBuilder<List<Movie>>(
-              future: _future,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done) {
-                  return const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: LoadingView(),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: ErrorView(
-                      message: '${snapshot.error}',
-                      onRetry: _reload,
-                    ),
-                  );
-                }
-                final movies = snapshot.requireData;
-                if (movies.isEmpty) {
-                  return const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: EmptyView(
-                      icon: Icons.event_busy,
-                      message: AppStrings.noMovies,
-                    ),
-                  );
-                }
-                return SliverList.builder(
-                  itemCount: movies.length,
+            BlocBuilder<ComingSoonCubit, ComingSoonState>(
+              builder: (context, state) => SliverLoadStateView(
+                status: state.status,
+                errorMessage: state.errorMessage,
+                onRetry: cubit.load,
+                isEmpty: state.movies.isEmpty,
+                emptyIcon: Icons.event_busy,
+                emptyMessage: AppStrings.noMovies,
+                builder: (_) => SliverList.builder(
+                  itemCount: state.movies.length,
                   itemBuilder: (context, i) {
-                    final movie = movies[i];
+                    final movie = state.movies[i];
                     final tag = 'coming-${movie.key}';
                     return ComingSoonTile(
                       movie: movie,
@@ -84,8 +47,8 @@ class _ComingSoonPageState extends State<ComingSoonPage> {
                       onTap: () => MovieDetailPage.open(context, movie, tag),
                     );
                   },
-                );
-              },
+                ),
+              ),
             ),
           ],
         ),

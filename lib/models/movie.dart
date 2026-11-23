@@ -91,8 +91,6 @@ class Movie {
 
   int? get year => releaseDate?.year;
 
-  bool get hasRating => rating > AppLimits.noRating;
-
   /// Ví dụ "Hành động, Phiêu lưu".
   String get genreText => genres.join(', ');
 

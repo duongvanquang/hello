@@ -11,7 +11,6 @@ class AppStrings {
   static const String login = 'Đăng nhập';
   static const String register = 'Đăng ký';
   static const String logout = 'Đăng xuất';
-  static const String download = 'Tải xuống';
   static const String genre = 'Thể loại';
   static const String myList = 'Danh sách';
   static const String myListFull = 'Danh sách của tôi';
@@ -31,12 +30,6 @@ class AppStrings {
   // ===== Chip lọc trên trang chủ =====
   static const String tvSeries = 'Phim bộ';
   static const String singleMovies = 'Phim lẻ';
-  static const List<String> homeFilters = [
-    tvSeries,
-    singleMovies,
-    genre,
-    myListFull,
-  ];
 
   // ===== Đăng nhập / Đăng ký =====
   static const String loginSubtitle = 'Chào mừng bạn quay lại!';
@@ -91,7 +84,6 @@ class AppStrings {
   static const String rowNowPlaying = 'Đang chiếu rạp';
   static const String rowPopular = 'Phổ biến';
   static const String rowTopRated = 'Đánh giá cao';
-  static const String rowUpcoming = 'Sắp ra mắt';
   static const String rowTvTrending = 'Phim bộ thịnh hành';
   static const String rowTvAiringToday = 'Phim bộ chiếu hôm nay';
   static const String rowTvPopular = 'Phim bộ phổ biến';

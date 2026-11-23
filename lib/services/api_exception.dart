@@ -10,7 +10,6 @@ class ApiException implements Exception {
   final int? statusCode;
 
   bool get isUnauthorized => HttpStatusCode.isUnauthorized(statusCode);
-  bool get isNotFound => statusCode == HttpStatusCode.notFound;
 
   @override
   String toString() => message;

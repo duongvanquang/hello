@@ -28,7 +28,11 @@ class FakeTmdbClient {
       final path = request.url.path;
 
       final Object body;
-      if (path.contains('/genre/')) {
+      if (path.endsWith('/guest_session/new')) {
+        body = {'success': true, 'guest_session_id': 'guest-test'};
+      } else if (request.method == 'POST') {
+        body = {'success': true};
+      } else if (path.contains('/genre/')) {
         body = {
           'genres': [
             {'id': 28, 'name': 'Hành động'},

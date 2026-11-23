@@ -1,11 +1,12 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../common/app_colors.dart';
-import '../common/app_strings.dart';
-import '../services/auth_service.dart';
-import '../common/app_text_styles.dart';
-import '../common/app_spacing.dart';
 import '../common/app_radius.dart';
+import '../common/app_spacing.dart';
+import '../common/app_strings.dart';
+import '../common/app_text_styles.dart';
+import '../services/auth_service.dart';
 
 /// Khung cảnh báo khi app chưa kết nối Firebase. Đã kết nối thì không hiện gì.
 class FirebaseSetupNotice extends StatelessWidget {
@@ -13,7 +14,7 @@ class FirebaseSetupNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (AuthService.instance.isReady) return const SizedBox.shrink();
+    if (context.read<AuthService>().isReady) return const SizedBox.shrink();
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: AppSpacing.l),

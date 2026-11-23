@@ -1,14 +1,16 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../blocs/auth/auth_cubit.dart';
 import '../common/app_colors.dart';
-import '../common/app_strings.dart';
-import '../services/auth_failure.dart';
-import '../services/auth_service.dart';
-import 'user_avatar.dart';
-import '../common/app_text_styles.dart';
-import '../common/app_spacing.dart';
+import '../common/app_messages.dart';
 import '../common/app_radius.dart';
 import '../common/app_sizes.dart';
+import '../common/app_spacing.dart';
+import '../common/app_strings.dart';
+import '../common/app_text_styles.dart';
+import '../services/auth_failure.dart';
+import 'user_avatar.dart';
 
 /// Bảng trượt từ dưới lên khi bấm ảnh đại diện: tên, email, nút Đăng xuất.
 class AccountSheet extends StatelessWidget {
@@ -28,21 +30,21 @@ class AccountSheet extends StatelessWidget {
   }
 
   Future<void> _signOut(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
-    Navigator.of(context).pop();
+    final authCubit = context.read<AuthCubit>();
+    final navigator = Navigator.of(context);
     try {
-      await AuthService.instance.signOut();
+      await authCubit.signOut();
+      navigator.pop();
     } on AuthFailure catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+      if (context.mounted) AppMessages.show(context, e.message);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = AuthService.instance.currentUser;
-    final name = (user?.displayName?.isNotEmpty ?? false)
-        ? user!.displayName!
-        : AppStrings.guestName;
+    final user = context.read<AuthCubit>().state.user;
+    final displayName = user?.displayName ?? '';
+    final email = user?.email;
 
     return SafeArea(
       child: Padding(
@@ -57,10 +59,13 @@ class AccountSheet extends StatelessWidget {
           children: [
             const UserAvatar(size: AppSizes.avatarLarge),
             const SizedBox(height: AppSpacing.md),
-            Text(name, style: AppTextStyles.title),
-            if (user?.email != null) ...[
+            Text(
+              displayName.isNotEmpty ? displayName : AppStrings.guestName,
+              style: AppTextStyles.title,
+            ),
+            if (email != null) ...[
               const SizedBox(height: AppSpacing.xs),
-              Text(user!.email!, style: AppTextStyles.secondary),
+              Text(email, style: AppTextStyles.secondary),
             ],
             const SizedBox(height: AppSpacing.xl),
             SizedBox(

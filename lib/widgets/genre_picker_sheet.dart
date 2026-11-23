@@ -1,19 +1,21 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../blocs/genres/genres_cubit.dart';
+import '../blocs/genres/genres_state.dart';
 import '../common/app_colors.dart';
-import '../common/app_strings.dart';
-import '../models/genre.dart';
-import '../repositories/movie_repository.dart';
-import 'error_view.dart';
-import 'loading_view.dart';
-import '../common/app_text_styles.dart';
-import '../common/app_spacing.dart';
 import '../common/app_radius.dart';
 import '../common/app_sizes.dart';
+import '../common/app_spacing.dart';
+import '../common/app_strings.dart';
+import '../common/app_text_styles.dart';
+import '../models/genre.dart';
+import 'error_view.dart';
+import 'loading_view.dart';
 
-/// Bảng chọn thể loại trượt từ dưới lên. Danh sách thể loại lấy từ TMDB.
+/// Bảng chọn thể loại trượt từ dưới lên, danh sách lấy bằng [GenresCubit].
 /// Trả về thể loại được chọn, hoặc null nếu đóng bảng.
-class GenrePickerSheet extends StatefulWidget {
+class GenrePickerSheet extends StatelessWidget {
   const GenrePickerSheet({super.key, this.selected});
 
   final Genre? selected;
@@ -28,16 +30,12 @@ class GenrePickerSheet extends StatefulWidget {
           top: Radius.circular(AppRadius.sheet),
         ),
       ),
-      builder: (_) => GenrePickerSheet(selected: selected),
+      builder: (_) => BlocProvider(
+        create: (ctx) => GenresCubit(ctx.read())..load(),
+        child: GenrePickerSheet(selected: selected),
+      ),
     );
   }
-
-  @override
-  State<GenrePickerSheet> createState() => _GenrePickerSheetState();
-}
-
-class _GenrePickerSheetState extends State<GenrePickerSheet> {
-  late Future<List<Genre>> _genres = MovieRepository.instance.loadGenres();
 
   @override
   Widget build(BuildContext context) {
@@ -56,44 +54,19 @@ class _GenrePickerSheetState extends State<GenrePickerSheet> {
               child: Text(AppStrings.chooseGenre, style: AppTextStyles.title),
             ),
             Expanded(
-              child: FutureBuilder<List<Genre>>(
-                future: _genres,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const LoadingView();
-                  }
-                  if (snapshot.hasError) {
+              child: BlocBuilder<GenresCubit, GenresState>(
+                builder: (context, state) {
+                  if (state.status.isLoading) return const LoadingView();
+                  if (state.status.isFailure) {
                     return ErrorView(
-                      message: '${snapshot.error}',
-                      onRetry: () => setState(
-                        () => _genres = MovieRepository.instance.loadGenres(),
-                      ),
+                      message: state.errorMessage ?? '',
+                      onRetry: context.read<GenresCubit>().load,
                     );
                   }
-                  final genres = snapshot.requireData;
                   return ListView.builder(
-                    itemCount: genres.length,
-                    itemBuilder: (context, i) {
-                      final genre = genres[i];
-                      final selected = genre.id == widget.selected?.id;
-                      return ListTile(
-                        title: Text(
-                          genre.name,
-                          style: AppTextStyles.primary.copyWith(
-                            color: selected
-                                ? AppColors.primary
-                                : AppColors.textPrimary,
-                            fontWeight: selected
-                                ? FontWeight.w700
-                                : FontWeight.w400,
-                          ),
-                        ),
-                        trailing: selected
-                            ? const Icon(Icons.check, color: AppColors.primary)
-                            : null,
-                        onTap: () => Navigator.of(context).pop(genre),
-                      );
-                    },
+                    itemCount: state.genres.length,
+                    itemBuilder: (context, i) =>
+                        _genreTile(context, state.genres[i]),
                   );
                 },
               ),
@@ -101,6 +74,20 @@ class _GenrePickerSheetState extends State<GenrePickerSheet> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _genreTile(BuildContext context, Genre genre) {
+    final isSelected = genre.id == selected?.id;
+    return ListTile(
+      title: Text(
+        genre.name,
+        style: isSelected ? AppTextStyles.link : AppTextStyles.primary,
+      ),
+      trailing: isSelected
+          ? const Icon(Icons.check, color: AppColors.primary)
+          : null,
+      onTap: () => Navigator.of(context).pop(genre),
     );
   }
 }

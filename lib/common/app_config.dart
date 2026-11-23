@@ -3,8 +3,6 @@ class AppConfig {
 
   static const String tmdbApiKey = String.fromEnvironment('TMDB_API_KEY');
 
-  static bool get hasTmdbApiKey => tmdbApiKey.isNotEmpty;
-
   static const String tmdbHost = 'api.themoviedb.org';
 
   static const String tmdbLanguage = 'vi-VN';

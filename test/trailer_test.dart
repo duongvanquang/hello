@@ -11,6 +11,8 @@ import 'package:hello/pages/trailer_page.dart';
 import 'package:hello/repositories/movie_repository.dart';
 import 'package:hello/services/tmdb_api.dart';
 
+import 'helpers/test_app.dart';
+
 const _movie = Movie(id: 1, title: 'Phim', description: '', rating: 7);
 
 MovieRepository _repoWithVideos(List<Map<String, Object>> videos) {
@@ -67,10 +69,18 @@ void main() {
   });
 
   testWidgets('Trang trailer báo khi phim chưa có trailer', (tester) async {
-    MovieRepository.instance = _repoWithVideos([]);
     await tester.pumpWidget(
-      const MaterialApp(home: TrailerPage(movie: _movie)),
+      testApp(
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () => TrailerPage.open(context, _movie),
+            child: const Text('open'),
+          ),
+        ),
+        repository: _repoWithVideos([]),
+      ),
     );
+    await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
     expect(find.text(AppStrings.noTrailer), findsOneWidget);
   });

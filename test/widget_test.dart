@@ -3,42 +3,21 @@ import 'package:material_ui/material_ui.dart';
 
 import 'package:hello/app.dart';
 import 'package:hello/common/app_strings.dart';
-import 'package:hello/data/my_list.dart';
 import 'package:hello/models/movie.dart';
 import 'package:hello/pages/main_page.dart';
 import 'package:hello/pages/movie_detail_page.dart';
 import 'package:hello/pages/register_page.dart';
-import 'package:hello/repositories/movie_repository.dart';
-import 'package:hello/services/tmdb_api.dart';
 import 'package:hello/widgets/movie_poster.dart';
 import 'package:hello/widgets/sliver_movie_grid.dart';
 
 import 'fakes/fake_tmdb_client.dart';
-
-/// Màn hình cỡ iPhone 17 Pro Max.
-void useIphoneSize(WidgetTester tester) {
-  tester.view.physicalSize = const Size(1320, 2868);
-  tester.view.devicePixelRatio = 3;
-  addTearDown(tester.view.reset);
-}
-
-/// Dùng API giả thay cho TMDB thật.
-void useFakeApi({int statusCode = 200}) {
-  MovieRepository.instance = MovieRepository(
-    api: TmdbApi(
-      client: FakeTmdbClient.create(statusCode: statusCode),
-      apiKey: 'test-key',
-    ),
-  );
-}
+import 'helpers/test_app.dart';
 
 void main() {
-  setUp(() => MyList.movies.value = const []);
-
   group('Đăng nhập', () {
     testWidgets('Chưa đăng nhập thì mở trang Đăng nhập', (tester) async {
       useIphoneSize(tester);
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(MyApp(movieRepository: fakeRepository()));
       await tester.pump();
 
       expect(find.text(AppStrings.loginSubtitle), findsOneWidget);
@@ -47,7 +26,7 @@ void main() {
 
     testWidgets('Bấm Đăng nhập khi để trống thì báo lỗi', (tester) async {
       useIphoneSize(tester);
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(MyApp(movieRepository: fakeRepository()));
       await tester.pump();
 
       await tester.tap(find.widgetWithText(FilledButton, AppStrings.login));
@@ -59,7 +38,7 @@ void main() {
 
     testWidgets('Đăng ký: mật khẩu nhập lại không khớp', (tester) async {
       useIphoneSize(tester);
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(MyApp(movieRepository: fakeRepository()));
       await tester.pump();
 
       await tester.tap(find.widgetWithText(TextButton, AppStrings.register));
@@ -79,11 +58,13 @@ void main() {
   });
 
   group('Trang chủ (dữ liệu từ API)', () {
-    Widget app() => const MaterialApp(home: MainPage());
+    Widget app({int statusCode = 200}) => testApp(
+      const MainPage(),
+      repository: fakeRepository(statusCode: statusCode),
+    );
 
     testWidgets('Tải xong thì hiện banner và các hàng phim', (tester) async {
       useIphoneSize(tester);
-      useFakeApi();
       await tester.pumpWidget(app());
       expect(find.text(AppStrings.loading), findsOneWidget);
 
@@ -95,8 +76,7 @@ void main() {
 
     testWidgets('API lỗi thì hiện thông báo và nút Thử lại', (tester) async {
       useIphoneSize(tester);
-      useFakeApi(statusCode: 401);
-      await tester.pumpWidget(app());
+      await tester.pumpWidget(app(statusCode: 401));
       await tester.pumpAndSettle();
 
       expect(find.text(AppStrings.invalidApiKey), findsOneWidget);
@@ -107,7 +87,6 @@ void main() {
       tester,
     ) async {
       useIphoneSize(tester);
-      useFakeApi();
       await tester.pumpWidget(app());
       await tester.pumpAndSettle();
 
@@ -122,12 +101,10 @@ void main() {
       await tester.tap(find.text(AppStrings.myList).last);
       await tester.pump();
       expect(find.text(AppStrings.addedToList), findsWidgets);
-      expect(MyList.movies.value, hasLength(1));
     });
 
     testWidgets('Chip Phim bộ tải các hàng phim bộ', (tester) async {
       useIphoneSize(tester);
-      useFakeApi();
       await tester.pumpWidget(app());
       await tester.pumpAndSettle();
 
@@ -145,7 +122,6 @@ void main() {
       tester,
     ) async {
       useIphoneSize(tester);
-      useFakeApi();
       await tester.pumpWidget(app());
       await tester.pumpAndSettle();
 
@@ -161,7 +137,6 @@ void main() {
 
     testWidgets('Tab Tìm kiếm gọi API khi gõ tên phim', (tester) async {
       useIphoneSize(tester);
-      useFakeApi();
       await tester.pumpWidget(app());
       await tester.pumpAndSettle();
 
@@ -178,7 +153,6 @@ void main() {
 
     testWidgets('Tab Danh sách của tôi khi chưa lưu phim', (tester) async {
       useIphoneSize(tester);
-      useFakeApi();
       await tester.pumpWidget(app());
       await tester.pumpAndSettle();
 

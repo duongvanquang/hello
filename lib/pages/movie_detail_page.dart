@@ -1,68 +1,53 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../blocs/movie_detail/movie_detail_cubit.dart';
+import '../blocs/movie_detail/movie_detail_state.dart';
 import '../common/app_colors.dart';
+import '../common/app_sizes.dart';
+import '../common/app_spacing.dart';
 import '../common/app_strings.dart';
+import '../common/app_text_styles.dart';
 import '../models/movie.dart';
-import '../repositories/movie_repository.dart';
+import '../widgets/loading_view.dart';
 import '../widgets/movie_action_row.dart';
 import '../widgets/movie_artwork.dart';
 import '../widgets/movie_meta_row.dart';
 import '../widgets/sliver_movie_grid.dart';
 import '../widgets/wide_button.dart';
 import 'trailer_page.dart';
-import '../common/app_text_styles.dart';
-import '../common/app_spacing.dart';
-import '../common/app_sizes.dart';
 
-/// Trang chi tiết một bộ phim. Hiện ngay thông tin đã có, rồi tải thêm
-/// thể loại, thời lượng, mô tả đầy đủ và phim tương tự từ TMDB.
-class MovieDetailPage extends StatefulWidget {
-  const MovieDetailPage({
-    super.key,
-    required this.movie,
-    required this.heroTag,
-  });
+/// Trang chi tiết một bộ phim ([MovieDetailCubit]). Hiện ngay thông tin đã có,
+/// rồi tải thêm thể loại, thời lượng, mô tả đầy đủ và phim tương tự.
+class MovieDetailPage extends StatelessWidget {
+  const MovieDetailPage({super.key, required this.heroTag});
 
-  final Movie movie;
   final String heroTag;
 
   /// Mở trang chi tiết của [movie]. [heroTag] phải trùng tag của poster vừa bấm.
   static Future<void> open(BuildContext context, Movie movie, String heroTag) {
     return Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => MovieDetailPage(movie: movie, heroTag: heroTag),
+        builder: (_) => BlocProvider(
+          create: (ctx) => MovieDetailCubit(ctx.read(), movie)..load(),
+          child: MovieDetailPage(heroTag: heroTag),
+        ),
       ),
     );
   }
 
   @override
-  State<MovieDetailPage> createState() => _MovieDetailPageState();
-}
-
-class _MovieDetailPageState extends State<MovieDetailPage> {
-  late final Future<Movie> _details = MovieRepository.instance.loadDetails(
-    widget.movie,
-  );
-  late final Future<List<Movie>> _similar = MovieRepository.instance
-      .loadSimilar(widget.movie);
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: FutureBuilder<Movie>(
-        future: _details,
-        builder: (context, snapshot) {
-          // Chưa tải xong (hoặc lỗi) thì dùng thông tin có sẵn từ danh sách.
-          final movie = snapshot.data ?? widget.movie;
-          return CustomScrollView(
-            slivers: [
-              _header(movie),
-              SliverToBoxAdapter(child: _info(context, movie, snapshot)),
-              _similarGrid(),
-            ],
-          );
-        },
+      body: BlocBuilder<MovieDetailCubit, MovieDetailState>(
+        builder: (context, state) => CustomScrollView(
+          slivers: [
+            _header(state.movie),
+            SliverToBoxAdapter(child: _info(context, state)),
+            _similar(state),
+          ],
+        ),
       ),
     );
   }
@@ -76,19 +61,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       iconTheme: const IconThemeData(color: AppColors.textPrimary),
       flexibleSpace: FlexibleSpaceBar(
         background: Hero(
-          tag: widget.heroTag,
+          tag: heroTag,
           child: MovieArtwork(movie: movie, useBackdrop: true),
         ),
       ),
     );
   }
 
-  Widget _info(
-    BuildContext context,
-    Movie movie,
-    AsyncSnapshot<Movie> snapshot,
-  ) {
-    final loadingDetails = snapshot.connectionState != ConnectionState.done;
+  Widget _info(BuildContext context, MovieDetailState state) {
+    final movie = state.movie;
+    final loadingDetails = state.detailsStatus.isLoading;
     final description = movie.description.isNotEmpty
         ? movie.description
         : (loadingDetails ? '' : AppStrings.noDescription);
@@ -113,14 +95,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             background: AppColors.textPrimary,
             foreground: AppColors.textOnLight,
             onTap: () => TrailerPage.open(context, movie),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          WideButton(
-            icon: Icons.download,
-            label: AppStrings.download,
-            background: AppColors.surface,
-            foreground: AppColors.textPrimary,
-            onTap: () {},
           ),
           const SizedBox(height: AppSpacing.l),
           if (loadingDetails && description.isEmpty)
@@ -152,39 +126,31 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  Widget _similarGrid() {
-    return FutureBuilder<List<Movie>>(
-      future: _similar,
-      builder: (context, snapshot) {
-        final movies = snapshot.data ?? const <Movie>[];
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(AppSpacing.xxl),
-              child: Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
-              ),
-            ),
-          );
-        }
-        if (movies.isEmpty) {
-          return const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.l,
-                AppSpacing.none,
-                AppSpacing.l,
-                AppSpacing.huge,
-              ),
-              child: Text(AppStrings.noMovies, style: AppTextStyles.secondary),
-            ),
-          );
-        }
-        return SliverMovieGrid(
-          movies: movies,
-          heroPrefix: 'similar-${widget.movie.key}',
-        );
-      },
+  Widget _similar(MovieDetailState state) {
+    if (state.similarStatus.isLoading) {
+      return const SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.xxl),
+          child: LoadingView(),
+        ),
+      );
+    }
+    if (state.similar.isEmpty) {
+      return const SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.l,
+            AppSpacing.none,
+            AppSpacing.l,
+            AppSpacing.huge,
+          ),
+          child: Text(AppStrings.noMovies, style: AppTextStyles.secondary),
+        ),
+      );
+    }
+    return SliverMovieGrid(
+      movies: state.similar,
+      heroPrefix: 'similar-${state.movie.key}',
     );
   }
 }

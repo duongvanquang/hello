@@ -6,6 +6,7 @@ import '../models/media_type.dart';
 import '../models/movie.dart';
 import '../models/movie_category.dart';
 import '../models/video.dart';
+import '../services/api_exception.dart';
 import '../services/tmdb_api.dart';
 import '../common/app_durations.dart';
 import '../common/app_limits.dart';
@@ -13,9 +14,6 @@ import '../common/app_limits.dart';
 /// Lấy phim lẻ / phim bộ từ TMDB và đổi thành [Movie]. Các trang chỉ gọi lớp này.
 class MovieRepository {
   MovieRepository({TmdbApi? api}) : _api = api ?? TmdbApi();
-
-  /// Bản dùng chung cho cả app. Test có thể gán bản khác.
-  static MovieRepository instance = MovieRepository();
 
   final TmdbApi _api;
 
@@ -176,7 +174,11 @@ class MovieRepository {
     final cached = _guestSessionId;
     if (cached != null) return cached;
     final json = await _api.get('/authentication/guest_session/new');
-    return _guestSessionId = json['guest_session_id'] as String;
+    final sessionId = json['guest_session_id'];
+    if (sessionId is! String) {
+      throw const ApiException(AppStrings.invalidResponse);
+    }
+    return _guestSessionId = sessionId;
   }
 
   Future<HomeData> _buildHome({
