@@ -17,6 +17,8 @@ import 'package:hello/services/tmdb_api.dart';
 
 import '../fakes/fake_tmdb_client.dart';
 
+import 'package:hello/repositories/movie_source_repository.dart';
+
 /// Repository dùng API giả (không cần mạng, không cần khóa thật).
 MovieRepository fakeRepository({int statusCode = 200, http.Client? client}) =>
     MovieRepository(
@@ -34,6 +36,9 @@ Widget testApp(Widget home, {MovieRepository? repository}) {
         value: repository ?? fakeRepository(),
       ),
       RepositoryProvider<AuthService>.value(value: AuthService.instance),
+      RepositoryProvider<MovieSourceRepository>.value(
+        value: const MovieSourceRepository(),
+      ),
     ],
     child: MultiBlocProvider(
       providers: [

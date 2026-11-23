@@ -76,47 +76,51 @@ class _TrailerPageState extends State<TrailerPage> {
           overflow: TextOverflow.ellipsis,
         ),
       ),
-      body: BlocBuilder<TrailerCubit, TrailerState>(
-        builder: (context, state) {
-          if (state.status.isLoading) {
-            return const AppShimmer(child: BackdropCardSkeleton());
-          }
-          if (state.status.isFailure) {
-            return ErrorView(
-              message: state.errorMessage ?? '',
-              onRetry: context.read<TrailerCubit>().load,
-            );
-          }
-          final video = state.video;
-          if (video == null) {
-            return const EmptyView(
-              icon: Icons.videocam_off_outlined,
-              message: AppStrings.noTrailer,
-            );
-          }
-          return ListView(
-            children: [
-              YoutubePlayer(
-                controller: _controllerFor(video),
-                aspectRatio: AppSizes.backdropAspectRatio,
-                backgroundColor: AppColors.textOnLight,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.screen),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(video.name, style: AppTextStyles.title),
-                    const SizedBox(height: AppSpacing.sm),
-                    if (widget.movie.description.isNotEmpty)
-                      Text(widget.movie.description, style: AppTextStyles.body),
-                  ],
-                ),
-              ),
-            ],
+      body: _content(),
+    );
+  }
+
+  Widget _content() {
+    return BlocBuilder<TrailerCubit, TrailerState>(
+      builder: (context, state) {
+        if (state.status.isLoading) {
+          return const AppShimmer(child: BackdropCardSkeleton());
+        }
+        if (state.status.isFailure) {
+          return ErrorView(
+            message: state.errorMessage ?? '',
+            onRetry: context.read<TrailerCubit>().load,
           );
-        },
-      ),
+        }
+        final video = state.video;
+        if (video == null) {
+          return const EmptyView(
+            icon: Icons.videocam_off_outlined,
+            message: AppStrings.noTrailer,
+          );
+        }
+        return ListView(
+          children: [
+            YoutubePlayer(
+              controller: _controllerFor(video),
+              aspectRatio: AppSizes.backdropAspectRatio,
+              backgroundColor: AppColors.textOnLight,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.screen),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(video.name, style: AppTextStyles.title),
+                  const SizedBox(height: AppSpacing.sm),
+                  if (widget.movie.description.isNotEmpty)
+                    Text(widget.movie.description, style: AppTextStyles.body),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

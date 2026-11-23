@@ -14,10 +14,10 @@ import '../widgets/movie_artwork.dart';
 import '../widgets/movie_meta_row.dart';
 import '../widgets/sliver_movie_grid.dart';
 import '../widgets/wide_button.dart';
-import 'trailer_page.dart';
 import '../widgets/app_shimmer.dart';
 import '../widgets/skeletons/poster_grid_skeleton.dart';
 import '../widgets/skeletons/text_lines_skeleton.dart';
+import '../common/app_playback.dart';
 
 /// Trang chi tiết một bộ phim ([MovieDetailCubit]). Hiện ngay thông tin đã có,
 /// rồi tải thêm thể loại, thời lượng, mô tả đầy đủ và phim tương tự.
@@ -93,11 +93,18 @@ class MovieDetailPage extends StatelessWidget {
           const SizedBox(height: AppSpacing.l),
           WideButton(
             icon: Icons.play_arrow,
-            label: AppStrings.play,
+            label: AppPlayback.labelFor(movie),
             background: AppColors.textPrimary,
             foreground: AppColors.textOnLight,
-            onTap: () => TrailerPage.open(context, movie),
+            onTap: () => AppPlayback.play(context, movie),
           ),
+          if (movie.isUpcoming && movie.releaseDate != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              AppStrings.releaseOn(movie.releaseDate!),
+              style: AppTextStyles.highlight,
+            ),
+          ],
           const SizedBox(height: AppSpacing.l),
           if (loadingDetails && description.isEmpty)
             const AppShimmer(child: TextLinesSkeleton())

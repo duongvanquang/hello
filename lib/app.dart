@@ -13,6 +13,7 @@ import 'pages/auth_gate.dart';
 import 'repositories/movie_repository.dart';
 import 'services/auth_service.dart';
 import 'services/avatar_storage.dart';
+import 'repositories/movie_source_repository.dart';
 
 /// Gốc của app: cung cấp repository và các Cubit dùng chung cho mọi trang.
 /// Test có thể truyền [movieRepository] / [authService] giả.
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
       providers: [
         RepositoryProvider<MovieRepository>(
           create: (_) => movieRepository ?? MovieRepository(),
+        ),
+        RepositoryProvider<MovieSourceRepository>(
+          create: (_) => const MovieSourceRepository(),
         ),
         RepositoryProvider<AuthService>(
           create: (_) => authService ?? AuthService.instance,

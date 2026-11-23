@@ -11,6 +11,7 @@ import '../common/app_radius.dart';
 import '../common/app_sizes.dart';
 import '../common/app_limits.dart';
 import '../common/app_gradients.dart';
+import '../common/app_playback.dart';
 
 /// Banner lớn đầu trang chủ giới thiệu một phim nổi bật.
 class FeaturedBanner extends StatelessWidget {
@@ -96,8 +97,8 @@ class FeaturedBanner extends StatelessWidget {
                         ),
                       ),
                       icon: const Icon(Icons.play_arrow, size: AppSizes.iconL),
-                      label: const Text(
-                        AppStrings.play,
+                      label: Text(
+                        AppPlayback.labelFor(movie),
                         style: AppTextStyles.button,
                       ),
                     ),

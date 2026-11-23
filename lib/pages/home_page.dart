@@ -18,9 +18,9 @@ import '../widgets/sliver_load_state_view.dart';
 import '../widgets/sliver_movie_grid.dart';
 import '../widgets/sliver_my_list_grid.dart';
 import 'movie_detail_page.dart';
-import 'trailer_page.dart';
 import '../widgets/skeletons/home_skeleton.dart';
 import '../widgets/skeletons/poster_grid_skeleton.dart';
+import '../common/app_playback.dart';
 
 /// Trang chủ: thanh tiêu đề + chip lọc + nội dung theo bộ lọc ([HomeCubit]).
 /// Bấm lại chip đang chọn để bỏ lọc. Kéo xuống để tải lại.
@@ -119,7 +119,7 @@ class HomePage extends StatelessWidget {
                 return FeaturedBanner(
                   movie: featured,
                   inMyList: myList.contains(featured),
-                  onPlay: () => TrailerPage.open(context, featured),
+                  onPlay: () => AppPlayback.play(context, featured),
                   onToggleMyList: () => myList.toggle(featured),
                   onInfo: () =>
                       MovieDetailPage.open(context, featured, 'featured'),

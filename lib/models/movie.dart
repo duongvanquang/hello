@@ -91,6 +91,16 @@ class Movie {
 
   int? get year => releaseDate?.year;
 
+  /// Phim chưa khởi chiếu (ngày chiếu sau hôm nay) → chỉ có trailer.
+  bool get isUpcoming {
+    final date = releaseDate;
+    if (date == null) return false;
+    // Chỉ so ngày (bỏ giờ): phim chiếu hôm nay là đã ra.
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    return DateTime(date.year, date.month, date.day).isAfter(today);
+  }
+
   /// Ví dụ "Hành động, Phiêu lưu".
   String get genreText => genres.join(', ');
 

@@ -124,11 +124,21 @@ class AppStrings {
   static const String invalidResponse = 'Dữ liệu trả về không hợp lệ.';
 
   // ===== Nút trên phim =====
-  static const String play = 'Phát';
   static const String addedToList = 'Đã thêm';
   static const String info = 'Thông tin';
   static const String rate = 'Đánh giá';
   static const String share = 'Chia sẻ';
+
+  // ===== Xem phim =====
+  static const String watchTrailer = 'Xem trailer';
+  static const String watchMovie = 'Xem phim';
+  static const String whereToWatch = 'Xem phim ở đâu';
+  static const String whereToWatchNote =
+      'Mở trang tìm kiếm của dịch vụ hợp pháp. Phim có thể chưa có ở đó; '
+      'phim mới ra thường chỉ chiếu ở rạp.';
+  static const String cinemaShowtimes = 'Lịch chiếu rạp & đặt vé';
+  static const String streamingService = 'Xem online (cần tài khoản / gói)';
+  static const String cannotOpenLink = 'Không mở được trang. Vui lòng thử lại.';
 
   // ===== Đánh giá / chia sẻ =====
   static const String rateTitle = 'Bạn chấm phim này mấy sao?';
