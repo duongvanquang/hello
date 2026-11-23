@@ -47,7 +47,8 @@ Mở `ios/Runner/GoogleService-Info.plist`, copy giá trị `REVERSED_CLIENT_ID`
 Tắt app hẳn rồi bấm F5. Khung vàng "Chưa kết nối Firebase" sẽ biến mất.
 
 ## Ghi chú
-- Bundle ID hiện là `com.example.hello`. Nếu muốn đổi (ví dụ `com.quang.flutter2026`),
-  hãy đổi **trước** bước 3, vì Firebase gắn theo Bundle ID.
+- Bundle ID (iOS) và applicationId (Android) là `com.duongvanquang.phimhay`.
+  Firebase gắn app theo mã này: đổi mã thì phải chạy lại `flutterfire configure`.
+- Đăng nhập Google trên Android cần thêm SHA-1 của máy vào app Android trong Firebase.
 - Code liên quan: `lib/services/auth_service.dart` (mọi thao tác đăng nhập),
   `lib/pages/auth_gate.dart` (chọn trang Đăng nhập hay Trang chủ).

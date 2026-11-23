@@ -51,18 +51,19 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAai-_3WUVTVuU-vYVy_cwwJZkYpCGTbPs',
-    appId: '1:268764257702:android:72652d8c8212a6ae48c367',
+    appId: '1:268764257702:android:6a579f84e79f5c9348c367',
     messagingSenderId: '268764257702',
     projectId: 'flutter-2026-f11f5',
     storageBucket: 'flutter-2026-f11f5.firebasestorage.app',
   );
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyChoe2uiWA6-iSg15g8uM7bRcTpc5Q4qZQ',
-    appId: '1:268764257702:ios:31ff6446df140ae548c367',
+    appId: '1:268764257702:ios:99216501ae37330f48c367',
     messagingSenderId: '268764257702',
     projectId: 'flutter-2026-f11f5',
     storageBucket: 'flutter-2026-f11f5.firebasestorage.app',
-    iosClientId: '268764257702-h30hb7t95hi7oft0j4kkggdi8pc0e3q1.apps.googleusercontent.com',
-    iosBundleId: 'com.example.hello',
+    androidClientId: '268764257702-0vr04tico71j27nb9nskebou4omr47v3.apps.googleusercontent.com',
+    iosClientId: '268764257702-qcn1n5if5ve42k9qe1iva5rqaa4432m6.apps.googleusercontent.com',
+    iosBundleId: 'com.duongvanquang.phimhay',
   );
 }
